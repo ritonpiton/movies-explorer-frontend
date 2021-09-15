@@ -1,0 +1,124 @@
+/* скрываем чекбокс */
+#checkbox {
+    opacity: 0;
+}
+#checkbox:checked ~ .navigation__burger-btn > span {
+    transform: rotate(45deg);
+}
+#checkbox:checked ~ .navigation__burger-btn > span::before {
+    top: 0;
+    transform: rotate(0);
+}
+#checkbox:checked ~ .navigation__burger-btn > span::after {
+    top: 0;
+    transform: rotate(90deg);
+}
+#checkbox:checked ~ .navigation__links-container{
+    visibility: visible;
+    right: 0;
+}
+
+/* стилизуем кнопку */
+.navigation__burger-btn {
+    display: flex; /* используем flex для центрирования содержимого */
+    align-items: center;  /* центрируем содержимое кнопки */
+    position: fixed;
+    top: 15px;
+    right: 30px;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    z-index: 11;
+}
+/* добавляем "гамбургер" */
+.navigation__burger-btn > span,
+.navigation__burger-btn > span::before,
+.navigation__burger-btn > span::after {
+    display: block;
+    position: absolute;
+    width: 28px;
+    height: 3px;
+    background-color: black;
+}
+.navigation__burger-btn > span::before {
+    content: '';
+    top: -11px;
+}
+.navigation__burger-btn > span::after {
+    content: '';
+    top: 11px;
+}
+/* контейнер меню */
+.navigation__links-container {
+    display: block;
+    position: fixed;
+    visibility: hidden;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 80px 0;
+    list-style: none;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+.navigation__links {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 520px;
+    height: 100%;
+    margin: 0;
+    padding: 159px 0;
+    list-style-type: none;
+    text-align: center;
+    background-color: #FFFFFF;
+}
+.navigation__link-item{
+    margin-bottom: 28px;
+}
+.navigation__link {
+    margin: 0;
+    text-decoration: none;
+    color: black;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: center;
+}
+.navigation__link_type_active{
+    border-bottom: 2px solid black;
+}
+
+@media all and (min-width: 1024px) {
+    .navigation__burger-btn{
+        display: none;
+    }
+    .navigation__links{
+        visibility: visible;
+        width: 381px;
+        height: 32px;
+        padding: 18px 70px 18px 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+    .navigation__link{
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 18px;
+        margin-right: 20px;
+    }
+    .navigation__link_type_active{
+        border: none;
+        font-weight: 500;
+    }
+    .navigation__link_type_main{
+        display: none;
+    }
+    .navigation__link-item{
+        margin: 0;
+    }
+}

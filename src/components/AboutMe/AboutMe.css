@@ -1,0 +1,122 @@
+.about {
+    padding: 110px 70px 101px 70px;
+    box-sizing: border-box;
+    background: white;
+}
+.about__title {
+    height: 51px;
+    margin: 0;
+    border-bottom: 1px solid black;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 27px;
+    letter-spacing: -0.04em;
+}
+.about__container {
+    display: grid;
+    grid-template-areas:    "name photo"
+                            "profession photo"
+                            "text photo"
+                            "links photo";
+    margin-top: 66px;
+    justify-content: space-between;
+}
+.about__name{
+    grid-area: name;
+    font-weight: 400;
+    font-size: 50px;
+    line-height: 58px;
+    letter-spacing: -0.04em;
+    margin: 0 auto 18px 0;
+}
+.about__profession {
+    grid-area: profession;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 20px;
+    letter-spacing: -0.04em;
+    margin: 0 auto 26px 0;
+}
+.about__text {
+    grid-area: text;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    letter-spacing: -0.04em;
+    margin: 0 auto 99px 0;
+    max-width: 600px;
+}
+.about__photo{
+    grid-area: photo;
+    width: 270px;
+    border-radius: 10px;
+}
+.about__links{
+    grid-area: links;
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    margin: 0;
+}
+.about__link{
+    margin-right: 20px;
+    text-decoration: none;
+    color: black;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+}
+
+@media all and (max-width: 1023px) {
+    .about{
+        padding: 90px 50px;
+    }
+    .about__name{
+        font-size: 40px;
+        line-height: 40px;
+        margin-bottom: 16px;
+    }
+    .about__profession{
+        font-size: 12px;
+        line-height: 18px;
+        margin-bottom: 20px;
+    }
+    .about__text{
+        font-size: 12px;
+        line-height: 18px;
+        margin-bottom: 87px;
+    }
+    .about__photo{
+        margin-left: 49px;
+    }
+}
+
+@media all and (max-width: 767px) {
+    .about{
+        padding: 70px 18px;
+    }
+    .about__container{
+        display: flex;
+        flex-direction: column;
+    }
+    .about__name{
+        font-size: 30px;
+        line-height: 36px;
+        margin-bottom: 20px;
+    }
+    .about__profession{
+        font-size: 10px;
+        line-height: 16px;
+        margin-bottom: 20px;
+    }
+    .about__text{
+        font-size: 11px;
+        line-height: 16px;
+        margin-bottom: 40px;
+    }
+    .about__photo {
+        margin-left: 0;
+        margin-bottom: 40px;
+    }
+}

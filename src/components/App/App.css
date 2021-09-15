@@ -1,0 +1,11 @@
+.app {
+    font-family: 'Inter', 'Arial', sans-serif;
+    font-style: normal;
+    min-width: 320px;
+}
+.link:hover{
+    opacity: 0.7;
+}
+.button:hover{
+    opacity: 0.8;
+}
