@@ -1,5 +1,5 @@
 .search{
-    padding: 0 70px 40px 70px;
+    padding: 80px 70px 40px 70px;
     box-sizing: border-box;
     margin: 0 auto;
     border-bottom: 1px solid #E8E8E8;
@@ -34,7 +34,7 @@
 
 @media all and (max-width: 1023px) {
     .search{
-        padding: 0 30px 40px 30px;
+        padding: 80px 30px 40px 30px;
     }
     .search__fieldset{
         margin-bottom: 45px;
@@ -42,7 +42,7 @@
 }
 @media all and (max-width: 768px) {
     .search{
-        padding: 0 14px 44px 14px;
+        padding: 80px 14px 44px 14px;
     }
     .search__fieldset{
         margin-bottom: 45px;

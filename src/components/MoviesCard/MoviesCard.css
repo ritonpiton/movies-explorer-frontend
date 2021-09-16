@@ -53,6 +53,9 @@
     line-height: 11px;
     cursor: pointer;
     background-color: #F9F9F9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .card__status_saved{
     color: black;

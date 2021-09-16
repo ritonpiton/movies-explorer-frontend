@@ -73,5 +73,8 @@
         font-size: 12px;
         line-height: 14px;
     }
-
+    .form__logo-container{
+        display: flex;
+        justify-content: center;
+    }
 }

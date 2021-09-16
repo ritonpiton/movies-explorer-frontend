@@ -24,7 +24,7 @@
     align-items: center;  /* центрируем содержимое кнопки */
     position: fixed;
     top: 15px;
-    right: 30px;
+    right: 15px;
     width: 44px;
     height: 44px;
     cursor: pointer;
@@ -64,17 +64,25 @@
     z-index: 10;
 }
 .navigation__links {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     position: fixed;
     top: 0;
     right: 0;
     width: 520px;
-    height: 100%;
+    height: 100vh;
     margin: 0;
-    padding: 159px 0;
+    padding: 159px 0 90px 0;
+    box-sizing: border-box;
     list-style-type: none;
     text-align: center;
     background-color: #FFFFFF;
+}
+.navigation__link-container{
+    display: flex;
+    white-space: nowrap;
+    flex-direction: column;
 }
 .navigation__link-item{
     margin-bottom: 28px;
@@ -92,9 +100,32 @@
     border-bottom: 2px solid black;
 }
 
+@media all and (max-width: 520px) {
+    .navigation__links{
+        width: 100%;
+    }
+}
+@media all and (max-width: 767px) {
+    .navigation__burger-btn{
+        right: 0px;
+    }
+}
+
 @media all and (min-width: 1024px) {
+    #checkbox{
+        display: none;
+    }
     .navigation__burger-btn{
         display: none;
+    }
+    .navigation__links-container{
+        background-color: transparent;
+    }
+    .navigation__link-container{
+        flex-direction: row;
+    }
+    .navigation__link-container:last-of-type{
+        padding-left: 30px;
     }
     .navigation__links{
         visibility: visible;
@@ -104,6 +135,8 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+        top: 18px;
+        right: 70px;
     }
     .navigation__link{
         font-weight: 400;

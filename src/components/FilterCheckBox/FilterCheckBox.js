@@ -10,7 +10,7 @@ function FilterCheckBox() {
     return (
         <div className="checkbox">
             <label className={`checkbox__switch ${switchOn}`}>
-                <input name="checkbox" id="checkbox-input" type="checkbox" value={checkbox} onChange={handleChange} className="checkbox__input"/>
+                <input className="checkbox__input" name="checkbox" id="checkbox-input" type="checkbox" value={checkbox} onChange={handleChange}/>
             </label>
             <p className="checkbox__switch-text">Короткометражки</p>
         </div>

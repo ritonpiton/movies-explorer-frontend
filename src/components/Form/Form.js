@@ -24,8 +24,8 @@ function Form({ register, title, buttonText, linkText, handleForm }) {
     }
      return (
         <div className="form">
-            <Link to="/">
-                <img className="logo" src={logo} alt="Логотип" />
+            <Link className="form__logo-container" to="/">
+                <img className="logo form__logo" src={logo} alt="Логотип" />
             </Link>
             <h1 className="form__title">{title}</h1>
             <form className="form__container" onSubmit={handleSubmit}>

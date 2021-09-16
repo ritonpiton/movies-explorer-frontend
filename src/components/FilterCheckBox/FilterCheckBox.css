@@ -48,3 +48,6 @@
 .checkbox__switch_status_on:after{
     left: 18px !important;
 }
+.checkbox__input{
+    visibility: hidden;
+}

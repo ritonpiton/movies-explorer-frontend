@@ -13,7 +13,7 @@ import NotFoundError from "../NotFoundError/NotFoundError";
 
 
 function App() {
-    const [loggedIn, setLoggedIn] = React.useState(false);
+    const [loggedIn, setLoggedIn] = React.useState(true);
 
     React.useEffect(() => {
     }, [])
