@@ -1,42 +1,50 @@
 import './Profile.css';
 import React from 'react';
+import {useFormWithValidation} from "../../utils/useFormWithValidation";
+import {CurrentUserContext} from "../../contexts/CurrentUserContext";
 
-function Profile({ userName, userEmail, handleProfile }) {
-    const [name, setName] = React.useState('');
-    const [email, setEmail] = React.useState('');
+function Profile({ onEditProfile, signOut }) {
+    const { values, errors, isValid, handleChange, setValues } = useFormWithValidation({});
+    const [isEditActive, setEditActive] = React.useState(false);
 
-    function handleChange(e) {
-        const name = e.target.name;
-        const value = e.target.value;
-        if (name === 'name') setName(value);
-        if (name === 'email') setEmail(value);
-    }
+    const currentUser = React.useContext(CurrentUserContext);
+    React.useEffect(() => {
+        setValues({
+            ...values,
+            name: currentUser.name,
+            email: currentUser.email,
+        })
+    }, [currentUser]);
+
     function handleSubmit(e) {
         e.preventDefault();
-        if (!email || !name) {
-            return;
-        }
-        handleProfile(name, email)
+        onEditProfile(values);
+        setEditActive(false);
+    }
+    function handleEditActive(){
+        setEditActive(true);
     }
     return (
         <div className="profile">
-            <h2 className="profile__title">Привет, {userName}!</h2>
-            <form className="profile__form">
+            <h2 className="profile__title">Привет, {currentUser.name}!</h2>
+            <form className="profile__form" onSubmit={handleSubmit}>
                 <fieldset className="profile__fieldset">
                     <label className="profile__label">Имя</label>
-                    <input name="name" id="name-input" type="name" value={name} onChange={handleChange} placeholder={userName}
-                           className="profile__input" />
-                    <span className="form__input-error name-input-error"></span>
+                    <input name="name" id="name-input" type="text" value={values.name} onChange={handleChange} placeholder="Имя"
+                           className={`profile__input ${isEditActive ? '' : 'profile__input_disabled'}`} pattern={"[A-Za-zА-Яа-яЁё\\s\\-]{1,200}"}/>
+                    <span className="profile__input-error name-input-error">{errors.name}</span>
                 </fieldset>
                 <fieldset className="profile__fieldset">
                     <label className="profile__label">Email</label>
-                    <input name="email" id="email-input" type="email" value={email} onChange={handleChange} placeholder={userEmail}
-                           className="profile__input" />
-                    <span className="form__input-error email-input-error"></span>
+                    <input name="email" id="email-input" type="text" value={values.email} onChange={handleChange} placeholder="Email"
+                           className={`profile__input ${isEditActive ? '' : 'profile__input_disabled'}`} />
+                    <span className="profile__input-error email-input-error">{errors.email}</span>
                 </fieldset>
-
-                <button className="button profile__button profile__button_type_submit" onSubmit={handleSubmit}>Редактировать</button>
-                <button className="button profile__button profile__button_type_quit">Выйти из аккаунта</button>
+                <div className="profile__buttons-container">
+                    <button type="submit" className={`button profile__button profile__button_type_submit ${isEditActive ? 'profile__button_shown' : 'profile__button_not-shown'} ${isValid ? '' : 'profile__button_type_submit_disabled'}`}>Сохранить</button>
+                    <button type="button" className={`button profile__button profile__button_type_edit ${isEditActive ? 'profile__button_not-shown' : 'profile__button_shown'}`} onClick={handleEditActive}>Редактировать</button>
+                    <button type="button" className={`button profile__button profile__button_type_quit ${isEditActive ? 'profile__button_not-shown' : 'profile__button_shown'}`} onClick={signOut}>Выйти из аккаунта</button>
+                </div>
             </form>
 
         </div>

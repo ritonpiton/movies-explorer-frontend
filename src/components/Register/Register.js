@@ -4,8 +4,7 @@ import Form from "../Form/Form";
 
 function Register({ handleRegister }) {
     return (
-        <Form register={true} title="Добро пожаловать!" buttonText="Зарегестрироваться" linkText="Войти" handleForm={handleRegister}>
-        </Form>
+        <Form register={true} title="Добро пожаловать!" buttonText="Зарегестрироваться" linkText="Войти" handleForm={handleRegister}/>
     )
 }
 

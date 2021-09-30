@@ -4,7 +4,7 @@ import Form from "../Form/Form";
 
 function Login({ handleLogin }) {
     return (
-        <Form title="Рады видеть!" buttonText="Войти" linkText="Регистрация" handleForm={handleLogin}/>
+        <Form register={false} title="Рады видеть!" buttonText="Войти" linkText="Регистрация" handleForm={handleLogin}/>
     )
 }
 

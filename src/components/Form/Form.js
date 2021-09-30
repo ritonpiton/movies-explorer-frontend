@@ -1,27 +1,17 @@
 import './Form.css'
-import {Link} from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import React from "react";
 import logo from "../../images/logo.svg";
+import {useFormWithValidation} from "../../utils/useFormWithValidation";
 
 function Form({ register, title, buttonText, linkText, handleForm }) {
-    const [name, setName] = React.useState('');
-    const [email, setEmail] = React.useState('');
-    const [password, setPassword] = React.useState('');
+    const { values, errors, isValid, handleChange } = useFormWithValidation({});
 
-    function handleChange(e) {
-        const name = e.target.name;
-        const value = e.target.value;
-        if (name === 'name') setName(value);
-        if (name === 'email') setEmail(value);
-        if (name === 'password') setPassword(value);
-    }
     function handleSubmit(e) {
         e.preventDefault();
-        if (!email || !password) {
-            return;
-        }
-        handleForm(password, email)
+        register ? handleForm(values.name, values.email, values.password) : handleForm(values.email, values.password);
     }
+
      return (
         <div className="form">
             <Link className="form__logo-container" to="/">
@@ -33,24 +23,24 @@ function Form({ register, title, buttonText, linkText, handleForm }) {
                     register ? (
                         <>
                             <label className="form__label">Имя</label>
-                            <input name="name" id="name-input" type="name" value={name} onChange={handleChange} placeholder="Введите имя..."
-                                   className="form__input form__input_type_email" minLength="1" maxLength="200" required />
-                            <span className="form__input-error email-input-error"></span>
+                            <input name="name" id="name-input" type="name" value={values.name} onChange={handleChange} placeholder="Введите имя..."
+                                   className="form__input form__input_type_name" minLength="1" maxLength="200" pattern={"[A-Za-zА-Яа-яЁё\\s\\-]{1,200}"} required />
+                            <span className="form__input-error name-input-error">{errors.name}</span>
                         </>
                     ) : (
                         ""
                     )}
                 <label className="form__label">Email</label>
-                <input name="email" id="email-input" type="email" value={email} onChange={handleChange} placeholder="ВВедите email..."
+                <input name="email" id="email-input" type="email" value={values.email} onChange={handleChange} placeholder="Введите email..."
                        className="form__input form__input_type_email" minLength="5" maxLength="200" required />
-                <span className="form__input-error email-input-error"></span>
+                <span className="form__input-error email-input-error">{errors.email}</span>
 
                 <label className="form__label">Пароль</label>
-                <input name="password" id="password-input" type="password" value={password} onChange={handleChange} placeholder="Введите пароль..."
+                <input name="password" id="password-input" type="password" value={values.password} onChange={handleChange} placeholder="Введите пароль..."
                        className="form__input form__input_type_job" minLength="2" maxLength="200" required />
-                 <span className="form__input-error job-input-error"></span>
+                 <span className="form__input-error job-input-error">{errors.password}</span>
 
-                <button type="submit" className="button form__submit-btn">{buttonText}</button>
+                <button type="submit" className={`button form__submit-btn ${isValid ? '' : 'form__submit-btn_type_disabled'}`}>{buttonText}</button>
             </form>
             <div className="form__not-sign">
                 <p className="form__not-sign-text">{register ? 'Уже' : 'Еще не' } зарегестрированы? <Link to={register ? "/signin" : "/signup"} className="form__not-sign-link">{linkText}</Link></p>
@@ -59,4 +49,4 @@ function Form({ register, title, buttonText, linkText, handleForm }) {
      );
 }
 
-export default Form;
+export default withRouter(Form);
