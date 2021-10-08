@@ -37,22 +37,6 @@ function App() {
   React.useEffect(() => {
       const token = localStorage.getItem('token');
       if(loggedIn) {
-          /*Promise.all([mainApi.getUserInfo(token), moviesApi.getInitialCards()])
-              .then(([ userData, allCardsArray, savedMoviesArray ]) => {
-                  setCurrentUser(userData.data);
-
-                  setInitialCards(allCardsArray);
-                  localStorage.setItem("allMovies", JSON.stringify(allCardsArray));
-
-                  setSavedMovies(Array.from(savedMoviesArray.data));
-                  localStorage.setItem("savedMovies", JSON.stringify(savedMoviesArray));
-
-              })
-              .catch((err) => {
-                console.log(`Ошибка инициализации исходных данных \n${err}`);
-                localStorage.removeItem("allMovies");
-                localStorage.removeItem("savedMovies");
-              });*/
         mainApi.getUserInfo(token)
           .then(userData => {
             setCurrentUser(userData.data);
@@ -79,7 +63,7 @@ function App() {
             localStorage.removeItem("savedMovies");
           })
       }
-  },[loggedIn, history])
+  },[loggedIn])
 
   React.useEffect(() => {
       tokenCheck();
@@ -139,7 +123,6 @@ function App() {
     setUniqueRequestedCards([]);
     history.push('/')
   }
-  
   function handleEditProfile({name, email}) {
     const token = localStorage.getItem('token');
     mainApi.setUserInfo({name, email}, token)
@@ -148,6 +131,8 @@ function App() {
       })
       .catch((err) => console.log(`Ошибка изменения данных профиля \n${err}`))
   }
+
+
   const handleSearchMovie = React.useCallback((request, whereToFind) => {
       const str = request.toLowerCase();
       const set = new Set(uniqueRequestedCards);
