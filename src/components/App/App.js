@@ -63,7 +63,7 @@ function App() {
             localStorage.removeItem("savedMovies");
           })
       }
-  },[loggedIn])
+  },[loggedIn, history])
 
   React.useEffect(() => {
       tokenCheck();
@@ -148,7 +148,7 @@ function App() {
         }
       })
       setUniqueRequestedCards(Array.from(set));
-    }, [initialCards, isCheckboxDisabled])
+    }, [uniqueRequestedCards, isCheckboxDisabled])
 
   function handleAddMovie(movie) {
     const token = localStorage.getItem('token');
@@ -162,7 +162,6 @@ function App() {
 
   function handleDeleteMovie(movie) {
     const token = localStorage.getItem('token');
-    console.log(token)
     mainApi.deleteMovie(movie._id, token)
       .then(() => {
         setSavedMovies((state) => state.filter((item) => !(item._id === movie._id) && item))
@@ -218,7 +217,7 @@ function App() {
                   <ProtectedRoute path='/saved-movies'
                                   loggedIn={loggedIn}
                                   component={SavedMovies}
-                                  whereToFind={savedMovies}
+                                  savedMovies={savedMovies}
                                   requestedMovies={uniqueRequestedCards}
                                   savedMovies={savedMovies}
                                   handleSearchMovie={handleSearchMovie}

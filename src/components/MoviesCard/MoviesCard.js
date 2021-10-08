@@ -44,7 +44,7 @@ function MoviesCard({card, onCardAdd, onCardDelete, isOnSavedPage, isCardSaved})
       <div className="card">
           <img src={isOnSavedPage ? `${card.image}` : `https://api.nomoreparties.co${card.image.url}`} alt={card.nameRU} className="card__image"/>
           <h3 className="card__title">{card.nameRU}</h3>
-          <p className="card__duration">{hours != 0 ? `${hours} ч ${mins} мин` : `${mins} мин`}</p>
+          <p className="card__duration">{hours !== 0 ? `${hours} ч ${mins} мин` : `${mins} мин`}</p>
           {   isOnSavedPage ? (
                   <button className="button card__status card__status_delete" onClick={handleCardDelete}>
                       <img className="card__status-icon" src={deleteIcon} alt="Удалить" />
