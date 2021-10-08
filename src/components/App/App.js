@@ -85,6 +85,69 @@ function App() {
       tokenCheck();
   }, [])
 
+  function handleRegister(name, email, password) {
+    mainApi.register(name, email, password)
+      .then((res) => {
+        if (res) {
+          setIsRegistered(true);
+          handleLogin(email,password);
+        }
+        else setIsRegistered(false)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+  function handleLogin(email, password) {
+    mainApi.authorize(email, password)
+      .then((res) => {
+        if (res) {
+          localStorage.setItem('token', res.token);
+          setLoggedIn(true);
+          history.push('/');
+        }
+      })
+      .catch(err => console.log(err))
+  }
+  function tokenCheck() {
+    const token = localStorage.getItem('token');
+    const allMovies = localStorage.getItem('allMovies');
+    const savedMovies = localStorage.getItem('savedMovies');
+    if (token){
+      if(allMovies) {
+        setInitialCards(JSON.parse(allMovies));
+      }
+      if(savedMovies) {
+        setSavedMovies(JSON.parse(savedMovies));
+      }
+      mainApi.getContent(token)
+        .then((res) => {
+          if (res) {
+            setLoggedIn(true);
+          }
+        })
+        .catch(err => console.log(err))
+    }
+  }
+  function signOut() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('allMovies');
+    localStorage.removeItem('savedMovies');
+    setLoggedIn(false);
+    setInitialCards([]);
+    setSavedMovies([]);
+    setUniqueRequestedCards([]);
+    history.push('/')
+  }
+  
+  function handleEditProfile({name, email}) {
+    const token = localStorage.getItem('token');
+    mainApi.setUserInfo({name, email}, token)
+      .then((newUserData) => {
+        setCurrentUser(newUserData.data);
+      })
+      .catch((err) => console.log(`Ошибка изменения данных профиля \n${err}`))
+  }
   const handleSearchMovie = React.useCallback((request, whereToFind) => {
       const str = request.toLowerCase();
       const set = new Set(uniqueRequestedCards);
@@ -100,7 +163,6 @@ function App() {
         }
       })
       setUniqueRequestedCards(Array.from(set));
-      //localStorage.setItem('requestedCards', JSON.stringify(Array.from(set)));
     }, [initialCards, isCheckboxDisabled])
 
   function handleAddMovie(movie) {
@@ -108,13 +170,14 @@ function App() {
     mainApi.addMovie(movie, token)
       .then((newMovie) => {
         setSavedMovies([...savedMovies, newMovie]);
-        localStorage.setItem("savedMovies", JSON.stringify(savedMovies));
+        localStorage.setItem('savedMovies', JSON.stringify(savedMovies));
       })
       .catch((err) => console.log(`Ошибка добавления карточки \n${err}`))
   }
 
   function handleDeleteMovie(movie) {
     const token = localStorage.getItem('token');
+    console.log(token)
     mainApi.deleteMovie(movie._id, token)
       .then(() => {
         setSavedMovies((state) => state.filter((item) => !(item._id === movie._id) && item))
@@ -128,60 +191,6 @@ function App() {
         return item.movieId === movie.id;
       });
     }
-  }
-
-
-
-
-
-  function handleRegister(name, email, password) {
-      mainApi.register(name, email, password)
-          .then((res) => {
-              if (res) {
-                  setIsRegistered(true);
-                  handleLogin(email,password);
-              }
-              else setIsRegistered(false)
-          })
-          .catch((err) => {
-              console.log(err);
-          })
-  }
-  function handleLogin(email, password) {
-      mainApi.authorize(email, password)
-          .then((res) => {
-              if (res) {
-                  localStorage.setItem('token', res.token);
-                  setLoggedIn(true);
-                  history.push('/');
-              }
-          })
-          .catch(err => console.log(err))
-  }
-  function tokenCheck() {
-      const token = localStorage.getItem('token');
-      if (token){
-          mainApi.getContent(token)
-              .then((res) => {
-                  if (res) {
-                      setLoggedIn(true);
-                  }
-              })
-              .catch(err => console.log(err))
-      }
-  }
-  function signOut() {
-      localStorage.removeItem('token');
-      setLoggedIn(false);
-      history.push('/')
-  }
-  function handleEditProfile({name, email}) {
-      const token = localStorage.getItem('token');
-      mainApi.setUserInfo({name, email}, token)
-          .then((newUserData) => {
-              setCurrentUser(newUserData.data);
-          })
-          .catch((err) => console.log(`Ошибка изменения данных профиля \n${err}`))
   }
 
   return (

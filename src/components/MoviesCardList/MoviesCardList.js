@@ -4,7 +4,7 @@ import MoviesCard from '../MoviesCard/MoviesCard';
 import Preloader from "../Preloader/Preloader";
 import MoreCards from '../MoreCards/MoreCards';
 
-function MoviesCardList({ movies, onCardAdd, onCardDelete, isOnSavedPage, isSaved, isChecked}) {
+function MoviesCardList({ movies, onCardAdd, onCardDelete, isOnSavedPage, isSaved }) {
 
     const [isLoading, setIsLoading] = React.useState(true);
     const [index, setIndex] = React.useState(0); // сколько раз была нажата кнопка "Ещё"

@@ -6,6 +6,10 @@ import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 
 function MoviesCard({card, onCardAdd, onCardDelete, isOnSavedPage, isCardSaved}) {
   const currentUser = React.useContext(CurrentUserContext);
+
+  // Определяем, являемся ли мы владельцем текущей карточки
+  const isOwn = card.owner === currentUser._id;
+
   const [isAdded, setIsAdded] = React.useState(false);
 
   const [mins, setMins] = React.useState(0);
