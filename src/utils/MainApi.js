@@ -65,7 +65,7 @@ export const setUserInfo = (data, token) => {
         .then(res => checkResponse(res))
 }
 
-export const getSavedCards = (token) => {
+export const getSavedMovies = (token) => {
     return fetch(`${BASE_URL}/movies`, {
         method: 'GET',
         headers: {
@@ -76,7 +76,7 @@ export const getSavedCards = (token) => {
       .then(res => checkResponse(res))
 }
 
-export const addCard = (card, token) => {
+export const addMovie = (card, token) => {
     return fetch(`${BASE_URL}/movies`, {
         method: 'POST',
         headers: {
@@ -100,7 +100,7 @@ export const addCard = (card, token) => {
       .then(res => checkResponse(res))
 }
 
-export const deleteCard = (cardId, token) => {
+export const deleteMovie = (cardId, token) => {
     return fetch(`${BASE_URL}/movies/${cardId}`, {
         method: 'DELETE',
         headers: {

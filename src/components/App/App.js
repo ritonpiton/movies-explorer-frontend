@@ -69,7 +69,7 @@ function App() {
             localStorage.removeItem("allMovies");
           })
 
-        mainApi.getSavedCards(token)
+        mainApi.getSavedMovies(token)
           .then (savedMoviesArray => {
             setSavedMovies(Array.from(savedMoviesArray.data));
             localStorage.setItem("savedMovies", JSON.stringify(savedMoviesArray));
@@ -103,9 +103,9 @@ function App() {
       //localStorage.setItem('requestedCards', JSON.stringify(Array.from(set)));
     }, [initialCards, isCheckboxDisabled])
 
-  function handleAddCard(movie) {
+  function handleAddMovie(movie) {
     const token = localStorage.getItem('token');
-    mainApi.addCard(movie, token)
+    mainApi.addMovie(movie, token)
       .then((newMovie) => {
         setSavedMovies([...savedMovies, newMovie]);
         localStorage.setItem("savedMovies", JSON.stringify(savedMovies));
@@ -113,23 +113,24 @@ function App() {
       .catch((err) => console.log(`Ошибка добавления карточки \n${err}`))
   }
 
+  function handleDeleteMovie(movie) {
+    const token = localStorage.getItem('token');
+    mainApi.deleteMovie(movie._id, token)
+      .then(() => {
+        setSavedMovies((state) => state.filter((item) => !(item._id === movie._id) && item))
+      })
+      .catch((err) => console.log(`Ошибка удаления карточки \n${err}`))
+  }
+
   function handleIsSaved(movie) {
-    if (!savedMovies.message && movie) {
+    if (!savedMovies && movie) {
       return savedMovies.some((item) => {
         return item.movieId === movie.id;
       });
     }
   }
 
-  function handleDeleteCard(movie) {
-    const token = localStorage.getItem('token');
-    console.log(movie)
-    mainApi.deleteCard(movie._id, token)
-      .then(() => {
-        setSavedMovies((state) => state.filter((item) => !(item._id === movie._id) && item))
-      })
-      .catch((err) => console.log(`Ошибка удаления карточки \n${err}`))
-  }
+
 
 
 
@@ -209,9 +210,9 @@ function App() {
                                   loggedIn={loggedIn}
                                   component={Movies}
 
-                                  onCardAdd={handleAddCard}
-                                  onCardDelete={handleDeleteCard}
-                                  
+                                  onCardAdd={handleAddMovie}
+                                  onCardDelete={handleDeleteMovie}
+
                                   whereToFind={initialCards}
                                   requestedMovies={uniqueRequestedCards}
                                   savedMovies={savedMovies}
@@ -227,7 +228,7 @@ function App() {
                                   requestedMovies={uniqueRequestedCards}
                                   savedMovies={savedMovies}
                                   handleSearchMovie={handleSearchMovie}
-                                  onCardDelete={handleDeleteCard}
+                                  onCardDelete={handleDeleteMovie}
                                   isSaved={handleIsSaved}
                                   isShortMovieChecked={isShortMovieChecked}/>
 
