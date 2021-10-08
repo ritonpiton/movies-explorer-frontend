@@ -5,6 +5,7 @@ import Techs from "../Techs/Techs";
 import AboutMe from "../AboutMe/AboutMe";
 import Portfolio from "../Portfolio/Portfolio";
 import Movies from "../Movies/Movies";
+import {Redirect} from 'react-router-dom';
 
 function Main({ loggedIn }) {
     return (
@@ -12,7 +13,7 @@ function Main({ loggedIn }) {
             {
                 loggedIn
                 ? (
-                    <Movies />
+                    <Redirect to='/movies'></Redirect>
                 )
                 : (
                     <>

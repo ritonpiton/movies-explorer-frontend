@@ -1,17 +1,55 @@
 import './MoviesCardList.css';
 import React from 'react';
 import MoviesCard from '../MoviesCard/MoviesCard';
-import MoreCards from "../MoreCards/MoreCards";
 import Preloader from "../Preloader/Preloader";
+import MoreCards from '../MoreCards/MoreCards';
 
-function MoviesCardList({ cards, isOnSaved, isSaved }) {
-    console.log({cards: cards})
+function MoviesCardList({ movies, onCardAdd, onCardDelete, isOnSavedPage, isSaved, isChecked}) {
+
     const [isLoading, setIsLoading] = React.useState(true);
+    const [index, setIndex] = React.useState(0); // сколько раз была нажата кнопка "Ещё"
+    const [windowSize, setWindowSize] = React.useState(window.innerWidth);
+    const [count, setCount] = React.useState(0);
 
+    // прелоадер
     React.useEffect(() => {
         const loadingTimeout = setTimeout(() => setIsLoading(false), 3000);
         return () => clearTimeout(loadingTimeout);
     }, []);
+
+    React.useEffect(() => {
+        isOnSavedPage ? setCount(movies.length) : setCount(sizeOfPreloadedArray() + index * sizeOfAddedLine());
+    }, [index])
+
+    // отслеживаем изменение размера экрана
+    React.useEffect(() => {
+        const setWindowWidth = () => {
+            const newWidth = window.innerWidth;
+            setWindowSize(newWidth);
+        }
+        window.addEventListener("resize", setWindowWidth);
+        return () => window.removeEventListener("resize", setWindowWidth);
+    }, [])
+
+    function handleMore() {
+        setIndex(index+1);
+    }
+
+    // сколько карточек загрузить при первой загрузке
+    const sizeOfPreloadedArray = () => {
+        if (windowSize >= 1280) {
+            return 12;
+        } else if (windowSize < 768) {
+            return 5;
+        } else return 8;
+    }
+
+    // по сколько карточек добавлять при нажатии кнопки "Ещё"
+    const sizeOfAddedLine = () => {
+        if (windowSize >= 1280) {
+            return 3;
+        } else return 2;
+    }
 
     return(
         <>
@@ -20,25 +58,23 @@ function MoviesCardList({ cards, isOnSaved, isSaved }) {
                     : (
                         <div className="cards">
                             {
-                                cards && cards.length > 0
+                                movies && movies.length > 0
                                     ? (
-                                        cards.map((movie) => {
+                                        movies.slice(0, count).map((movie) => {
                                             return (
-                                                <MoviesCard key={movie.id.toString()} title={movie.nameRU}
-                                                            image={`https://api.nomoreparties.co${movie.image.url}`}
-                                                            duration={movie.duration} isSaved={isSaved} isOnSaved={isOnSaved}/>
+                                                <MoviesCard key={movie._id} card={movie} onCardAdd={onCardAdd} onCardDelete={onCardDelete} isOnSavedPage={isOnSavedPage} isCardSaved={isSaved}/>
                                             );
                                         })
                                     )
-                                    : cards === undefined ? (
-                                        <p>Вы пока ничего не искали, введите ключевое слово в поиске</p>
-                                    )
-                                  : (
-                                    <p>Ничего не найдено</p>
-                                  )
+                                    : <p className="cards__title">Ничего не найдено</p>
                             }
                         </div>
                     )
+            }
+            {
+                count < movies.length ?
+                    movies.length > sizeOfPreloadedArray() && <MoreCards handleMore={handleMore}/>
+                : ""
             }
         </>
     )

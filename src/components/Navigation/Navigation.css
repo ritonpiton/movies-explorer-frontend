@@ -83,6 +83,7 @@
     display: flex;
     white-space: nowrap;
     flex-direction: column;
+    list-style-type: none;
 }
 .navigation__link-item{
     margin-bottom: 28px;

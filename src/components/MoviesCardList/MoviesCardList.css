@@ -9,9 +9,17 @@
     justify-items: center;
 }
 
+.cards__title{
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    margin: 0 auto;
+    grid-column: 1 / 4;
+}
+
 @media screen and (max-width: 1023px) {
     .cards{
-        grid-template-columns: repeat(auto-fill, minmax(342px, 1fr));
+        grid-template-columns: repeat(2, minmax(342px, 1fr));
         grid-gap: 35px 24px;
         padding: 70px 30px 30px 30px;
     }
@@ -19,7 +27,7 @@
 
 @media screen and (max-width: 767px) {
     .cards{
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: repeat(1, minmax(300px, 1fr));
         grid-gap: 16px;
         padding: 40px 10px 30px 10px;
     }

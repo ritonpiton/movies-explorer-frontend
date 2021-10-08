@@ -5,6 +5,9 @@
 }
 .checkbox__switch-text{
     margin: 0 0 0 12px;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
 }
 .checkbox__switch{
     margin: 0;

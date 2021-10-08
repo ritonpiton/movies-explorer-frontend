@@ -14,14 +14,14 @@ function Navigation() {
 
                 <div className="navigation__links-container">
                     <ul className="navigation__links">
-                        <li className="navigation__link-container">
+                        <ul className="navigation__link-container">
                             <li className="navigation__link-item"><NavLink className={`link navigation__link navigation__link_type_main`} exact to="/" activeClassName="navigation__link_type_active">Главная</NavLink></li>
                             <li className="navigation__link-item"><NavLink className={`link navigation__link navigation__link_type_movies`} to="/movies" activeClassName="navigation__link_type_active">Фильмы</NavLink></li>
                             <li className="navigation__link-item"><NavLink className={`link navigation__link navigation__link_type_saved-movies`} to="/saved-movies" activeClassName="navigation__link_type_active">Сохранённые фильмы</NavLink></li>
-                        </li>
-                        <li className="navigation__link-container">
+                        </ul>
+                        <ul className="navigation__link-container">
                             <AccountButton/>
-                        </li>
+                        </ul>
 
                     </ul>
                 </div>

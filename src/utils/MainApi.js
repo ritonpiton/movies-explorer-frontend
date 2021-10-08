@@ -64,3 +64,49 @@ export const setUserInfo = (data, token) => {
     })
         .then(res => checkResponse(res))
 }
+
+export const getSavedCards = (token) => {
+    return fetch(`${BASE_URL}/movies`, {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+    })
+      .then(res => checkResponse(res))
+}
+
+export const addCard = (card, token) => {
+    return fetch(`${BASE_URL}/movies`, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            country: card.country || 'country',
+            director: card.director || 'director',
+            duration: card.duration || 0,
+            year: card.year || 0,
+            description: card.description || 'description',
+            image: `https://api.nomoreparties.co${card.image.url}` || 'image',
+            trailer: card.trailerLink || 'trailer',
+            thumbnail: `https://api.nomoreparties.co${card.image.formats.thumbnail.url}` || 'thumbnail',
+            movieId: card.id ,
+            nameRU: card.nameRU || 'nameRU',
+            nameEN: card.nameEN || 'nameEN',
+        })
+    })
+      .then(res => checkResponse(res))
+}
+
+export const deleteCard = (cardId, token) => {
+    return fetch(`${BASE_URL}/movies/${cardId}`, {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+    })
+      .then(res => checkResponse(res))
+}

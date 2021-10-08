@@ -2,17 +2,13 @@ import './SavedMovies.css';
 import React from 'react';
 import SearchForm from "../SearchForm/SearchForm";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
-import MoreCards from "../MoreCards/MoreCards";
-import Preloader from "../Preloader/Preloader";
 
-function SavedMovies() {
-
-
+function SavedMovies({ whereToFind, handleSearchMovie, isSaved, onCardDelete, isShortMovieChecked }) {
+  const savedMovies = JSON.parse(localStorage.getItem("savedMovies"));
     return (
         <section className="saved-movies">
-            <SearchForm/>
-            <MoviesCardList isOnSaved={true} />
-            <MoreCards/>
+            <SearchForm whereToFind={whereToFind} handleSearch={handleSearchMovie} isShortMovieChecked={isShortMovieChecked}/>
+            <MoviesCardList movies={savedMovies} isOnSavedPage={true} isSaved={isSaved} onCardDelete={onCardDelete}/>
         </section>
     );
 }
