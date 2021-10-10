@@ -3,9 +3,10 @@ import React from 'react';
 import FilterCheckBox from "../FilterCheckBox/FilterCheckBox";
 import {useFormWithValidation} from "../../utils/useFormWithValidation";
 
-function SearchForm({ handleSearch, whereToFind, isShortMovieChecked }) {
+function SearchForm({ whereToFind, handleSearch, isShortMovieChecked }) {
     const [request, setRequest] = React.useState(true); // есть ли текст в строке поиска
     const { values, handleChange } = useFormWithValidation({});
+
     function handleSubmit(e) {
         e.preventDefault();
         if (!values.search) {

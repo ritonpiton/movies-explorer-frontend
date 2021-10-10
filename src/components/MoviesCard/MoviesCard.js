@@ -2,21 +2,15 @@ import './MoviesCard.css';
 import React from 'react';
 import savedIcon from '../../images/saved-icon.svg';
 import deleteIcon from '../../images/delete-icon.svg';
-import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 
-function MoviesCard({card, onCardAdd, onCardDelete, isOnSavedPage, isCardSaved}) {
-  const currentUser = React.useContext(CurrentUserContext);
-
-  // Определяем, являемся ли мы владельцем текущей карточки
-  const isOwn = card.owner === currentUser._id;
-
+function MoviesCard({card, isOnSavedPage, isMovieSaved, onAddMovie, onDeleteMovie }) {
   const [isAdded, setIsAdded] = React.useState(false);
 
   const [mins, setMins] = React.useState(0);
   const [hours, setHours] = React.useState(0);
 
   React.useEffect(()=>{
-    setIsAdded(isCardSaved(card));
+    setIsAdded(isMovieSaved(card));
   }, [])
 
   React.useEffect(()=>{
@@ -30,13 +24,13 @@ function MoviesCard({card, onCardAdd, onCardDelete, isOnSavedPage, isCardSaved})
     }
   }, [])
 
-  function handleCardAdd() {
-    onCardAdd(card);
+  function handleAddMovie() {
+    onAddMovie(card);
     setIsAdded(true);
   }
 
-  function handleCardDelete() {
-    onCardDelete(card);
+  function handleDeleteMovie() {
+    onDeleteMovie(card);
     setIsAdded(false);
   }
 
@@ -46,15 +40,15 @@ function MoviesCard({card, onCardAdd, onCardDelete, isOnSavedPage, isCardSaved})
           <h3 className="card__title">{card.nameRU}</h3>
           <p className="card__duration">{hours !== 0 ? `${hours} ч ${mins} мин` : `${mins} мин`}</p>
           {   isOnSavedPage ? (
-                  <button className="button card__status card__status_delete" onClick={handleCardDelete}>
+                  <button className="button card__status card__status_delete" onClick={handleDeleteMovie}>
                       <img className="card__status-icon" src={deleteIcon} alt="Удалить" />
                   </button>
               )
               : isAdded ? (
-                <button className="card__status card__status_saved" onClick={handleCardAdd}>Сохранено</button>
+                <button className="card__status card__status_saved" onClick={handleDeleteMovie}>Сохранено</button>
               )
               : (
-                  <button className="button card__status card__status_not-saved" onClick={handleCardAdd}>
+                  <button className="button card__status card__status_not-saved" onClick={handleAddMovie}>
                       <img className="card__status-icon" src={savedIcon} alt="Сохранить" />
                   </button>
               )

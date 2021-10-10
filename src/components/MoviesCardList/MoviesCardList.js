@@ -4,7 +4,7 @@ import MoviesCard from '../MoviesCard/MoviesCard';
 import Preloader from "../Preloader/Preloader";
 import MoreCards from '../MoreCards/MoreCards';
 
-function MoviesCardList({ movies, onCardAdd, onCardDelete, isOnSavedPage, isSaved }) {
+function MoviesCardList({ movies, isOnSavedPage, isMovieSaved, onAddMovie, onDeleteMovie }) {
 
     const [isLoading, setIsLoading] = React.useState(true);
     const [index, setIndex] = React.useState(0); // сколько раз была нажата кнопка "Ещё"
@@ -17,6 +17,7 @@ function MoviesCardList({ movies, onCardAdd, onCardDelete, isOnSavedPage, isSave
         return () => clearTimeout(loadingTimeout);
     }, []);
 
+    // изменения количества отображаемых карточек, в зависимости от страницы
     React.useEffect(() => {
         isOnSavedPage ? setCount(movies.length) : setCount(sizeOfPreloadedArray() + index * sizeOfAddedLine());
     }, [index])
@@ -62,7 +63,12 @@ function MoviesCardList({ movies, onCardAdd, onCardDelete, isOnSavedPage, isSave
                                     ? (
                                         movies.slice(0, count).map((movie) => {
                                             return (
-                                                <MoviesCard key={movie._id} card={movie} onCardAdd={onCardAdd} onCardDelete={onCardDelete} isOnSavedPage={isOnSavedPage} isCardSaved={isSaved}/>
+                                                <MoviesCard key={isOnSavedPage? movie._id : movie.id}
+                                                            card={movie}
+                                                            isOnSavedPage={isOnSavedPage}
+                                                            isMovieSaved={isMovieSaved}
+                                                            onAddMovie={onAddMovie}
+                                                            onDeleteMovie={onDeleteMovie}/>
                                             );
                                         })
                                     )
@@ -72,9 +78,11 @@ function MoviesCardList({ movies, onCardAdd, onCardDelete, isOnSavedPage, isSave
                     )
             }
             {
-                count < movies.length ?
-                    movies.length > sizeOfPreloadedArray() && <MoreCards handleMore={handleMore}/>
-                : ""
+                !isOnSavedPage
+                && count < movies.length
+                && movies.length > sizeOfPreloadedArray()
+                && <MoreCards handleMore={handleMore}/>
+
             }
         </>
     )

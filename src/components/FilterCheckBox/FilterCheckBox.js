@@ -10,7 +10,6 @@ function FilterCheckBox({ isShortMovieChecked }) {
     }
     function setChecked () {
       isShortMovieChecked(checkbox);
-
     }
     return (
         <div className="checkbox">

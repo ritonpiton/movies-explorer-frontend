@@ -1,6 +1,6 @@
 import './App.css';
 import React from 'react';
-import { Route, Switch, withRouter, useRouteMatch, Redirect, useHistory } from 'react-router-dom';
+import { Route, Switch, withRouter, useRouteMatch, Redirect, useHistory, useLocation } from 'react-router-dom';
 import Header from '../Header/Header';
 import Login from "../Login/Login";
 import Register from "../Register/Register";
@@ -18,19 +18,25 @@ import {CurrentUserContext} from "../../contexts/CurrentUserContext";
 
 function App() {
   const history = useHistory();
+  const path = useLocation();
   const [loggedIn, setLoggedIn] = React.useState(false);
+  const [isCheckingToken, setIsCheckingToken] = React.useState(true) // (1)
   const [isRegistered, setIsRegistered] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({});
 
   // РАБОТА С КАРТОЧКАМИ
-  const [initialCards, setInitialCards] = React.useState([]); // тут хранятся все карточки из стороннего API
-  const [uniqueRequestedCards, setUniqueRequestedCards] = React.useState([]); // а тут - карточки, запрошенные пользователем
-  const [savedMovies, setSavedMovies] = React.useState([]); // сохраненные карточки пользователя
+  const [initialMovies, setInitialMovies] = React.useState([]); // карточки из стороннего API
+  const [requestedMoviesCards, setRequestedMoviesCards] = React.useState([]); // карточки по запросу на Movies
+  const [shortMoviesCards, setShortMoviesCards] = React.useState([]); // короткометражки по запросу на Movies
 
-  const [isCheckboxDisabled, setIsCheckboxDisabled] = React.useState(true);
+  const [savedMovies, setSavedMovies] = React.useState([]); // сохраненные карточки пользователя
+  const [requestedSavedMoviesCards, setRequestedSavedMoviesCards] = React.useState([]);// карточки по запросу на SavedMovies
+  const [shortSavedMoviesCards, setShortSavedMoviesCards] = React.useState([]); // короткометражки по запросу на SavedMovies
+
+  const [isCheckboxDisabled, setIsCheckboxDisabled] = React.useState(true); // чекбокс короткометражек
 
   function isShortMovieChecked(status) {
-    setIsCheckboxDisabled(status)
+    setIsCheckboxDisabled(status);
   }
 
   // получем данные текущего пользователя, карточки из стороннего API и сохранённые фильмы
@@ -40,12 +46,13 @@ function App() {
         mainApi.getUserInfo(token)
           .then(userData => {
             setCurrentUser(userData.data);
+            setIsCheckingToken(false);
           })
           .catch((err) => console.log(`Ошибка получения данных профиля \n${err}`))
 
         moviesApi.getInitialCards()
           .then(allMoviesArray => {
-            setInitialCards(allMoviesArray);
+            setInitialMovies(allMoviesArray);
             localStorage.setItem("allMovies", JSON.stringify(allMoviesArray));
           })
           .catch((err) => {
@@ -63,7 +70,7 @@ function App() {
             localStorage.removeItem("savedMovies");
           })
       }
-  },[loggedIn, history])
+  },[loggedIn, history, path])
 
   React.useEffect(() => {
       tokenCheck();
@@ -99,7 +106,7 @@ function App() {
     const savedMovies = localStorage.getItem('savedMovies');
     if (token){
       if(allMovies) {
-        setInitialCards(JSON.parse(allMovies));
+        setInitialMovies(JSON.parse(allMovies));
       }
       if(savedMovies) {
         setSavedMovies(JSON.parse(savedMovies));
@@ -118,9 +125,12 @@ function App() {
     localStorage.removeItem('allMovies');
     localStorage.removeItem('savedMovies');
     setLoggedIn(false);
-    setInitialCards([]);
+    setInitialMovies([]);
     setSavedMovies([]);
-    setUniqueRequestedCards([]);
+    setRequestedMoviesCards([]);
+    setRequestedSavedMoviesCards([]);
+    setShortMoviesCards([]);
+    setShortSavedMoviesCards([]);
     history.push('/')
   }
   function handleEditProfile({name, email}) {
@@ -131,24 +141,52 @@ function App() {
       })
       .catch((err) => console.log(`Ошибка изменения данных профиля \n${err}`))
   }
+  // поиск по тексту
+  function searchByText(request, whereToFind) {
+    const str = request.toLowerCase();
+    const set = new Set();
+    whereToFind.map(item => {
+      if (request && item.nameRU.toLowerCase().includes(str)) {
+        set.add(item);
+      }
+      else {
+        return;
+      }
+    })
+    return Array.from(set);
+  }
+  // поиск по длительности
+  function searchShortMovies(whereToFind) {
+    const set = new Set();
+    whereToFind.map(item => {
+      if (item.duration <= 40) {
+        set.add(item);
+      }
+      else {
+        return;
+      }
+    })
+    return Array.from(set);
+  }
 
+  function searchOnMoviesPage(request) {
+    setRequestedMoviesCards(searchByText(request, initialMovies));
+  }
 
-  const handleSearchMovie = React.useCallback((request, whereToFind) => {
-      const str = request.toLowerCase();
-      const set = new Set(uniqueRequestedCards);
+  function searchOnSavedMoviesPage(request) {
+    setRequestedSavedMoviesCards(searchByText(request, savedMovies));
+  }
 
-      whereToFind.map(item => {
-        if (request && !isCheckboxDisabled && item.duration < 40 && item.nameRU.toLowerCase().includes(str)) {
-          set.add(item);
-        } else if (request && isCheckboxDisabled && item.nameRU.toLowerCase().includes(str)) {
-          set.add(item);
-        }
-          else {
-          return;
-        }
-      })
-      setUniqueRequestedCards(Array.from(set));
-    }, [uniqueRequestedCards, isCheckboxDisabled])
+  React.useEffect(() => {
+    if (!isCheckboxDisabled) {
+      if (path.pathname === '/movies') {
+        setShortMoviesCards(searchShortMovies(requestedMoviesCards));
+      }
+      else if (path.pathname === '/saved-movies') {
+        setShortSavedMoviesCards(searchShortMovies(requestedSavedMoviesCards));
+      }
+    }
+  }, [isCheckboxDisabled])
 
   function handleAddMovie(movie) {
     const token = localStorage.getItem('token');
@@ -162,7 +200,15 @@ function App() {
 
   function handleDeleteMovie(movie) {
     const token = localStorage.getItem('token');
-    mainApi.deleteMovie(movie._id, token)
+    let movieId;
+    if (path.pathname === '/movies') {
+      movieId = savedMovies.filter((item) => { return (item.movieId === movie.id) })[0]._id;
+    }
+    else if (path.pathname === '/saved-movies'){
+      movieId = movie._id
+    }
+
+    mainApi.deleteMovie(movieId, token)
       .then(() => {
         setSavedMovies((state) => state.filter((item) => !(item._id === movie._id) && item))
       })
@@ -170,7 +216,7 @@ function App() {
   }
 
   function handleIsSaved(movie) {
-    if (!savedMovies && movie) {
+    if (savedMovies && movie) {
       return savedMovies.some((item) => {
         return item.movieId === movie.id;
       });
@@ -195,35 +241,36 @@ function App() {
                   </Route>
                   <ProtectedRoute path='/profile'
                                   loggedIn={loggedIn}
+                                  isCheckingToken={isCheckingToken}
                                   component={Profile}
                                   onEditProfile={handleEditProfile}
                                   signOut={signOut}/>
 
                   <ProtectedRoute path='/movies'
                                   loggedIn={loggedIn}
+                                  isCheckingToken={isCheckingToken}
                                   component={Movies}
-
-                                  onCardAdd={handleAddMovie}
-                                  onCardDelete={handleDeleteMovie}
-
-                                  whereToFind={initialCards}
-                                  requestedMovies={uniqueRequestedCards}
-                                  savedMovies={savedMovies}
-                                  handleSearchMovie={handleSearchMovie}
-
-                                  isSaved={handleIsSaved}
-                                  isShortMovieChecked={isShortMovieChecked}/>
+                                  movies={isCheckboxDisabled ? requestedMoviesCards : shortMoviesCards}
+                                  whereToFind={initialMovies}
+                                  handleSearch={searchOnMoviesPage}
+                                  isShortMovieChecked={isShortMovieChecked}
+                                  isMovieSaved={handleIsSaved}
+                                  onAddMovie={handleAddMovie}
+                                  onDeleteMovie={handleDeleteMovie}
+                                  />
 
                   <ProtectedRoute path='/saved-movies'
                                   loggedIn={loggedIn}
+                                  isCheckingToken={isCheckingToken}
                                   component={SavedMovies}
+                                  movies={isCheckboxDisabled ? requestedSavedMoviesCards : shortSavedMoviesCards}
                                   savedMovies={savedMovies}
-                                  requestedMovies={uniqueRequestedCards}
-                                  savedMovies={savedMovies}
-                                  handleSearchMovie={handleSearchMovie}
-                                  onCardDelete={handleDeleteMovie}
-                                  isSaved={handleIsSaved}
-                                  isShortMovieChecked={isShortMovieChecked}/>
+                                  whereToFind={savedMovies}
+                                  handleSearch={searchOnSavedMoviesPage}
+                                  isShortMovieChecked={isShortMovieChecked}
+                                  isMovieSaved={handleIsSaved}
+                                  onDeleteMovie={handleDeleteMovie}
+                                  />
 
                   <Route path='/*'>
                       <Redirect to='/not-found'></Redirect>
