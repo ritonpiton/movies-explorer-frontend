@@ -121,9 +121,12 @@
     }
     .navigation__links-container{
         background-color: transparent;
+        position: absolute;
+        width: 70px;
     }
     .navigation__link-container{
         flex-direction: row;
+
     }
     .navigation__link-container:last-of-type{
         padding-left: 30px;
@@ -136,8 +139,10 @@
         display: flex;
         flex-direction: row;
         align-items: center;
-        top: 18px;
-        right: 70px;
+        top: -60px;
+        right: 420px;
+        position: relative;
+
     }
     .navigation__link{
         font-weight: 400;
