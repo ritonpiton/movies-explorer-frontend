@@ -178,14 +178,14 @@ function App() {
   }
 
   React.useEffect(() => {
-  // if (!isCheckboxDisabled) {
-      if (path.pathname === '/movies') {
-        setShortMoviesCards(searchShortMovies(requestedMoviesCards));
-      }
-      else if (path.pathname === '/saved-movies') {
-        setShortSavedMoviesCards(searchShortMovies(requestedSavedMoviesCards.length > 0 ? requestedSavedMoviesCards : savedMovies));
-      }
-  }, [!isCheckboxDisabled])
+   if (!isCheckboxDisabled) {
+     if (path.pathname === '/movies') {
+       setShortMoviesCards(searchShortMovies(requestedMoviesCards));
+     } else if (path.pathname === '/saved-movies') {
+       setShortSavedMoviesCards(searchShortMovies(requestedSavedMoviesCards.length > 0 ? requestedSavedMoviesCards : savedMovies));
+     }
+   }
+  }, [isCheckboxDisabled])
 
   function handleAddMovie(movie) {
     const token = localStorage.getItem('token');
