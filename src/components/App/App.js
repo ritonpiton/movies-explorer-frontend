@@ -200,6 +200,7 @@ function App() {
 
   function handleDeleteMovie(movie) {
     const token = localStorage.getItem('token');
+
     let movieId;
     if (path.pathname === '/movies') {
       movieId = savedMovies.filter((item) => { return (item.movieId === movie.id) })[0]._id;
