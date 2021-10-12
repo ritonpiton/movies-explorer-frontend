@@ -35,6 +35,10 @@ function App() {
 
   const [isCheckboxDisabled, setIsCheckboxDisabled] = React.useState(true); // чекбокс короткометражек
 
+  // ОШИБКИ
+  const [serverError, setServerError] = React.useState(false);
+  const [errorText, setErrorText] = React.useState('');
+
   function isShortMovieChecked(status) {
     setIsCheckboxDisabled(status);
   }
@@ -58,6 +62,7 @@ function App() {
           .catch((err) => {
             console.log(`Ошибка получения фильмов из базы \n${err}`);
             localStorage.removeItem("allMovies");
+            setServerError(true);
           })
 
         mainApi.getSavedMovies(token)
@@ -68,13 +73,23 @@ function App() {
           .catch((err) => {
             console.log(`Ошибка получения сохранённых фильмов \n${err}`);
             localStorage.removeItem("savedMovies");
+            setServerError(true);
           })
       }
-  },[loggedIn, history, path])
+  },[loggedIn])
+
 
   React.useEffect(() => {
       tokenCheck();
   }, [])
+
+  // сбрасвыем текст ошибок, блок поиска и чекбокс короткометражек, при кажой смене страницы
+  React.useEffect(() => {
+    setErrorText('');
+    setRequestedMoviesCards([]);
+    setRequestedSavedMoviesCards([]);
+    setIsCheckboxDisabled(true);
+  }, [path.pathname])
 
   function handleRegister(name, email, password) {
     mainApi.register(name, email, password)
@@ -86,7 +101,9 @@ function App() {
         else setIsRegistered(false)
       })
       .catch((err) => {
-        console.log(err);
+        if (err.status === 400) setErrorText('Неверно заполнено одно из полей.')
+        else if (err.status === 409) setErrorText('Пользователь с таким email уже существует.')
+        else setErrorText('При регистрации пользователя произошла ошибка.')
       })
   }
   function handleLogin(email, password) {
@@ -98,7 +115,24 @@ function App() {
           history.push('/');
         }
       })
-      .catch(err => console.log(err))
+      .catch((err) => {
+        if (err.status === 400) setErrorText('Пропущено одно из полей.')
+        else if (err.status === 401) setErrorText('Вы ввели неправильный логин или пароль.')
+      })
+  }
+  function handleEditProfile({name, email}) {
+    const token = localStorage.getItem('token');
+    setErrorText('')
+    mainApi.setUserInfo({name, email}, token)
+      .then((newUserData) => {
+          setCurrentUser(newUserData.data);
+          setLoggedIn(true);
+      })
+      .catch((err) => {
+        if (err.status === 400) setErrorText('Неверно заполнено одно из полей.')
+        else if (err.status === 409) setErrorText('Пользователь с таким email уже существует.')
+        else setErrorText('При регистрации пользователя произошла ошибка.')
+      })
   }
   function tokenCheck() {
     const token = localStorage.getItem('token');
@@ -119,6 +153,9 @@ function App() {
         })
         .catch(err => console.log(err))
     }
+    setTimeout(() => {
+      setIsCheckingToken(false);
+    }, 50);
   }
   function signOut() {
     localStorage.removeItem('token');
@@ -133,14 +170,7 @@ function App() {
     setShortSavedMoviesCards([]);
     history.push('/')
   }
-  function handleEditProfile({name, email}) {
-    const token = localStorage.getItem('token');
-    mainApi.setUserInfo({name, email}, token)
-      .then((newUserData) => {
-        setCurrentUser(newUserData.data);
-      })
-      .catch((err) => console.log(`Ошибка изменения данных профиля \n${err}`))
-  }
+
   // поиск по тексту
   function searchByText(request, whereToFind) {
     const str = request.toLowerCase();
@@ -168,23 +198,21 @@ function App() {
     })
     return Array.from(set);
   }
-
   function searchOnMoviesPage(request) {
     setRequestedMoviesCards(searchByText(request, initialMovies));
   }
-
   function searchOnSavedMoviesPage(request) {
     setRequestedSavedMoviesCards(searchByText(request, savedMovies));
   }
 
   React.useEffect(() => {
-   if (!isCheckboxDisabled) {
+
      if (path.pathname === '/movies') {
        setShortMoviesCards(searchShortMovies(requestedMoviesCards));
      } else if (path.pathname === '/saved-movies') {
        setShortSavedMoviesCards(searchShortMovies(requestedSavedMoviesCards.length > 0 ? requestedSavedMoviesCards : savedMovies));
      }
-   }
+
   }, [isCheckboxDisabled])
 
   function handleAddMovie(movie) {
@@ -194,9 +222,11 @@ function App() {
         setSavedMovies([...savedMovies, newMovie]);
         localStorage.setItem('savedMovies', JSON.stringify(savedMovies));
       })
-      .catch((err) => console.log(`Ошибка добавления карточки \n${err}`))
+      .catch((err) => {
+        console.log(`Ошибка добавления карточки \n${err}`);
+        setServerError(true);
+      })
   }
-
   function handleDeleteMovie(movie) {
     const token = localStorage.getItem('token');
 
@@ -212,9 +242,11 @@ function App() {
       .then(() => {
         setSavedMovies((state) => state.filter((item) => !(item._id === movie._id) && item))
       })
-      .catch((err) => console.log(`Ошибка удаления карточки \n${err}`))
+      .catch((err) => {
+        console.log(`Ошибка удаления карточки \n${err}`);
+        setServerError(true);
+      })
   }
-
   function handleIsSaved(movie) {
     if (savedMovies && movie) {
       return savedMovies.some((item) => {
@@ -234,17 +266,20 @@ function App() {
                       <Main loggedIn={loggedIn} />
                   </Route>
                   <Route path='/signup'>
-                      <Register handleRegister={handleRegister} />
+                      <Register handleRegister={handleRegister}
+                                errorText={errorText}/>
                   </Route>
                   <Route path='/signin'>
-                      <Login handleLogin={handleLogin}/>
+                      <Login handleLogin={handleLogin}
+                             errorText={errorText}/>
                   </Route>
                   <ProtectedRoute path='/profile'
                                   loggedIn={loggedIn}
                                   isCheckingToken={isCheckingToken}
                                   component={Profile}
                                   onEditProfile={handleEditProfile}
-                                  signOut={signOut}/>
+                                  signOut={signOut}
+                                  errorText={errorText}/>
 
                   <ProtectedRoute path='/movies'
                                   loggedIn={loggedIn}
@@ -257,6 +292,7 @@ function App() {
                                   isMovieSaved={handleIsSaved}
                                   onAddMovie={handleAddMovie}
                                   onDeleteMovie={handleDeleteMovie}
+                                  serverError={serverError}
                                   />
 
                   <ProtectedRoute path='/saved-movies'

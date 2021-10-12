@@ -4,7 +4,7 @@ import React from "react";
 import logo from "../../images/logo.svg";
 import {useFormWithValidation} from "../../utils/useFormWithValidation";
 
-function Form({ register, title, buttonText, linkText, handleForm }) {
+function Form({ register, title, buttonText, linkText, handleForm, errorText }) {
     const { values, errors, isValid, handleChange } = useFormWithValidation({});
 
     function handleSubmit(e) {
@@ -40,6 +40,7 @@ function Form({ register, title, buttonText, linkText, handleForm }) {
                        className="form__input form__input_type_job" minLength="2" maxLength="200" required />
                  <span className="form__input-error job-input-error">{errors.password}</span>
 
+                <span className="form__api-error ">{errorText}</span>
                 <button type="submit" className={`button form__submit-btn ${isValid ? '' : 'form__submit-btn_type_disabled'}`}>{buttonText}</button>
             </form>
             <div className="form__not-sign">

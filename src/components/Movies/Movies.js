@@ -4,7 +4,7 @@ import SearchForm from "../SearchForm/SearchForm";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import {useHistory} from 'react-router-dom';
 
-function Movies({ movies, whereToFind, handleSearch, isShortMovieChecked, isMovieSaved, onAddMovie, onDeleteMovie }) {
+function Movies({ movies, whereToFind, handleSearch, isShortMovieChecked, isMovieSaved, onAddMovie, onDeleteMovie, serverError }) {
   const history = useHistory();
   React.useEffect(() => {
 
@@ -18,7 +18,8 @@ function Movies({ movies, whereToFind, handleSearch, isShortMovieChecked, isMovi
                             isOnSavedPage={false}
                             isMovieSaved={isMovieSaved}
                             onAddMovie={onAddMovie}
-                            onDeleteMovie={onDeleteMovie}/>
+                            onDeleteMovie={onDeleteMovie}
+                            serverError={serverError} />
         </section>
     );
 }

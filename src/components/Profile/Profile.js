@@ -3,7 +3,7 @@ import React from 'react';
 import {useFormWithValidation} from "../../utils/useFormWithValidation";
 import {CurrentUserContext} from "../../contexts/CurrentUserContext";
 
-function Profile({ onEditProfile, signOut }) {
+function Profile({ onEditProfile, signOut, errorText }) {
     const { values, errors, isValid, handleChange, setValues } = useFormWithValidation({});
     const [isEditActive, setEditActive] = React.useState(false);
 
@@ -14,7 +14,7 @@ function Profile({ onEditProfile, signOut }) {
             name: currentUser.name,
             email: currentUser.email,
         })
-    }, [currentUser]);
+    }, [currentUser, setValues, errorText]);
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -40,8 +40,10 @@ function Profile({ onEditProfile, signOut }) {
                            className={`profile__input ${isEditActive ? '' : 'profile__input_disabled'}`} />
                     <span className="profile__input-error email-input-error">{errors.email}</span>
                 </fieldset>
+
                 <div className="profile__buttons-container">
-                    <button type="submit" className={`button profile__button profile__button_type_submit ${isEditActive ? 'profile__button_shown' : 'profile__button_not-shown'} ${isValid ? '' : 'profile__button_type_submit_disabled'}`}>Сохранить</button>
+                    <span className="profile__api-error">{errorText}</span>
+                    <button type="submit" className={`button profile__button profile__button_type_submit ${isEditActive ? 'profile__button_shown' : 'profile__button_not-shown'} ${isValid && (currentUser.name !== values.name || currentUser.email !== values.email) ? '' : 'profile__button_type_submit_disabled'}`}>Сохранить</button>
                     <button type="button" className={`button profile__button profile__button_type_edit ${isEditActive ? 'profile__button_not-shown' : 'profile__button_shown'}`} onClick={handleEditActive}>Редактировать</button>
                     <button type="button" className={`button profile__button profile__button_type_quit ${isEditActive ? 'profile__button_not-shown' : 'profile__button_shown'}`} onClick={signOut}>Выйти из аккаунта</button>
                 </div>

@@ -4,7 +4,7 @@ import MoviesCard from '../MoviesCard/MoviesCard';
 import Preloader from "../Preloader/Preloader";
 import MoreCards from '../MoreCards/MoreCards';
 
-function MoviesCardList({ movies, isOnSavedPage, isMovieSaved, onAddMovie, onDeleteMovie }) {
+function MoviesCardList({ movies, isOnSavedPage, isMovieSaved, onAddMovie, onDeleteMovie, serverError }) {
 
     const [isLoading, setIsLoading] = React.useState(true);
     const [index, setIndex] = React.useState(0); // сколько раз была нажата кнопка "Ещё"
@@ -72,7 +72,7 @@ function MoviesCardList({ movies, isOnSavedPage, isMovieSaved, onAddMovie, onDel
                                             );
                                         })
                                     )
-                                    : <p className="cards__title">Ничего не найдено</p>
+                                    : serverError ? <p className="cards__title">Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз</p> : <p className="cards__title">Ничего не найдено</p>
                             }
                         </div>
                     )

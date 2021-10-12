@@ -42,8 +42,15 @@
     margin-bottom: 24px;
     color: #FF4062;
 }
+.form__api-error{
+    font-weight: normal;
+    font-size: 11px;
+    line-height: 13px;
+    margin: 160px auto 20px;
+    box-sizing: border-box;
+    color: #FF4062;
+}
 .form__submit-btn{
-    margin-top: 221px;
     max-width: 100%;
     height: 45px;
     background: #000000;

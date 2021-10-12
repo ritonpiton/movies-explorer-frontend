@@ -57,8 +57,16 @@
     line-height: 12px;
     color: #FF4062;
 }
+.profile__api-error{
+    font-weight: normal;
+    font-size: 11px;
+    line-height: 13px;
+    margin: 0 auto 20px;
+    box-sizing: border-box;
+    color: #FF4062;
+}
 .profile__buttons-container{
-    margin-top: 220px;
+    margin-top: 200px;
     display: flex;
     flex-direction: column;
 }

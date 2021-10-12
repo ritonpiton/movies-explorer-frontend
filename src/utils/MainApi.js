@@ -3,6 +3,7 @@ export const BASE_URL = '//localhost:3001'
 
 const checkResponse = (res) => {
     if (res.ok) return res.json();
+    else return Promise.reject(res);
 }
 
 export const authorize = (email, password) => {
