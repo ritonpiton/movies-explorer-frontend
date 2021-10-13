@@ -1,5 +1,5 @@
-export const BASE_URL = '//localhost:3001'
-//export const BASE_URL = '//api.mesto.frontend.domain.nomoredomains.rocks';
+//export const BASE_URL = '//localhost:3001'
+export const BASE_URL = '//api.ritonpiton.diploma.nomoredomains.club';
 
 const checkResponse = (res) => {
     if (res.ok) return res.json();
