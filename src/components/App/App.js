@@ -76,7 +76,7 @@ function App() {
             setServerError(true);
           })
       }
-  },[loggedIn])
+  },[loggedIn, path.pathname])
 
 
   React.useEffect(() => {
