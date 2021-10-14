@@ -20,9 +20,11 @@ function App() {
   const history = useHistory();
   const path = useLocation();
   const [loggedIn, setLoggedIn] = React.useState(false);
-  const [isCheckingToken, setIsCheckingToken] = React.useState(true) // (1)
+  const [isCheckingToken, setIsCheckingToken] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [isRegistered, setIsRegistered] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({});
+  const [isSearch, setIsSearch] = React.useState(false); // искали ли что-то
 
   // РАБОТА С КАРТОЧКАМИ
   const [initialMovies, setInitialMovies] = React.useState([]); // карточки из стороннего API
@@ -38,37 +40,48 @@ function App() {
   // ОШИБКИ
   const [serverError, setServerError] = React.useState(false);
   const [errorText, setErrorText] = React.useState('');
+  const [savingStatus, setSavingStatus] = React.useState('');
 
   function isShortMovieChecked(status) {
     setIsCheckboxDisabled(status);
   }
 
-  // получем данные текущего пользователя, карточки из стороннего API и сохранённые фильмы
+  // поулчаем карточки из стороннего API, если их еще нет
+  React.useEffect(() => {
+    if (initialMovies.length <= 0) {
+      moviesApi.getInitialCards()
+        .then(allMoviesArray => {
+          setInitialMovies(allMoviesArray);
+          localStorage.setItem("allMovies", JSON.stringify(allMoviesArray));
+        })
+        .catch((err) => {
+          console.log(`Ошибка получения фильмов из базы \n${err}`);
+          localStorage.removeItem("allMovies");
+          setServerError(true);
+        })
+    }
+  }, [])
+
+  // получем данные текущего пользователя и сохранённые фильмы
   React.useEffect(() => {
       const token = localStorage.getItem('token');
       if(loggedIn) {
         mainApi.getUserInfo(token)
           .then(userData => {
             setCurrentUser(userData.data);
+            localStorage.setItem("userData", JSON.stringify(userData.data));
             setIsCheckingToken(false);
           })
-          .catch((err) => console.log(`Ошибка получения данных профиля \n${err}`))
-
-        moviesApi.getInitialCards()
-          .then(allMoviesArray => {
-            setInitialMovies(allMoviesArray);
-            localStorage.setItem("allMovies", JSON.stringify(allMoviesArray));
-          })
           .catch((err) => {
-            console.log(`Ошибка получения фильмов из базы \n${err}`);
-            localStorage.removeItem("allMovies");
+            console.log(`Ошибка получения данных пользователя \n${err}`);
+            localStorage.removeItem("userData");
             setServerError(true);
           })
 
         mainApi.getSavedMovies(token)
           .then (savedMoviesArray => {
             setSavedMovies(Array.from(savedMoviesArray.data));
-            localStorage.setItem("savedMovies", JSON.stringify(savedMoviesArray));
+            localStorage.setItem("savedMovies", JSON.stringify(savedMoviesArray.data));
           })
           .catch((err) => {
             console.log(`Ошибка получения сохранённых фильмов \n${err}`);
@@ -78,17 +91,17 @@ function App() {
       }
   },[loggedIn, path.pathname])
 
-
   React.useEffect(() => {
       tokenCheck();
   }, [])
 
-  // сбрасвыем текст ошибок, блок поиска и чекбокс короткометражек, при кажой смене страницы
+  // сбрасвыем текст ошибок, рез-ты поиска и чекбокс короткометражек, при кажой смене страницы
   React.useEffect(() => {
     setErrorText('');
     setRequestedMoviesCards([]);
     setRequestedSavedMoviesCards([]);
     setIsCheckboxDisabled(true);
+    setIsSearch(false);
   }, [path.pathname])
 
   function handleRegister(name, email, password) {
@@ -127,10 +140,11 @@ function App() {
       .then((newUserData) => {
           setCurrentUser(newUserData.data);
           setLoggedIn(true);
+          setSavingStatus('Успешно!')
       })
       .catch((err) => {
-        if (err.status === 400) setErrorText('Неверно заполнено одно из полей.')
-        else if (err.status === 409) setErrorText('Пользователь с таким email уже существует.')
+        if (err.status === 400) setSavingStatus('Неверно заполнено одно из полей.')
+        else if (err.status === 409) setSavingStatus('Пользователь с таким email уже существует.')
         else setErrorText('При регистрации пользователя произошла ошибка.')
       })
   }
@@ -155,7 +169,7 @@ function App() {
     }
     setTimeout(() => {
       setIsCheckingToken(false);
-    }, 50);
+    }, 100);
   }
   function signOut() {
     localStorage.removeItem('token');
@@ -175,6 +189,7 @@ function App() {
   function searchByText(request, whereToFind) {
     const str = request.toLowerCase();
     const set = new Set();
+    setIsLoading(true);
     whereToFind.map(item => {
       if (request && item.nameRU.toLowerCase().includes(str)) {
         set.add(item);
@@ -183,6 +198,9 @@ function App() {
         return;
       }
     })
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
     return Array.from(set);
   }
   // поиск по длительности
@@ -203,10 +221,10 @@ function App() {
   }
   function searchOnSavedMoviesPage(request) {
     setRequestedSavedMoviesCards(searchByText(request, savedMovies));
+    setIsSearch(true);
   }
 
   React.useEffect(() => {
-
      if (path.pathname === '/movies') {
        setShortMoviesCards(searchShortMovies(requestedMoviesCards));
      } else if (path.pathname === '/saved-movies') {
@@ -221,6 +239,17 @@ function App() {
       .then((newMovie) => {
         setSavedMovies([...savedMovies, newMovie]);
         localStorage.setItem('savedMovies', JSON.stringify(savedMovies));
+
+        mainApi.getSavedMovies(token)
+          .then (savedMoviesArray => {
+            setSavedMovies(Array.from(savedMoviesArray.data));
+            localStorage.setItem("savedMovies", JSON.stringify(savedMoviesArray.data));
+          })
+          .catch((err) => {
+            console.log(`Ошибка получения сохранённых фильмов \n${err}`);
+            localStorage.removeItem("savedMovies");
+            setServerError(true);
+          })
       })
       .catch((err) => {
         console.log(`Ошибка добавления карточки \n${err}`);
@@ -229,7 +258,6 @@ function App() {
   }
   function handleDeleteMovie(movie) {
     const token = localStorage.getItem('token');
-
     let movieId;
     if (path.pathname === '/movies') {
       movieId = savedMovies.filter((item) => { return (item.movieId === movie.id) })[0]._id;
@@ -279,11 +307,12 @@ function App() {
                                   component={Profile}
                                   onEditProfile={handleEditProfile}
                                   signOut={signOut}
-                                  errorText={errorText}/>
+                                  savingStatus={savingStatus}/>
 
                   <ProtectedRoute path='/movies'
                                   loggedIn={loggedIn}
                                   isCheckingToken={isCheckingToken}
+                                  isLoading={isLoading}
                                   component={Movies}
                                   movies={isCheckboxDisabled ? requestedMoviesCards : shortMoviesCards}
                                   whereToFind={initialMovies}
@@ -298,6 +327,8 @@ function App() {
                   <ProtectedRoute path='/saved-movies'
                                   loggedIn={loggedIn}
                                   isCheckingToken={isCheckingToken}
+                                  isLoading={isLoading}
+                                  isSearch={isSearch}
                                   component={SavedMovies}
                                   movies={isCheckboxDisabled ? requestedSavedMoviesCards : shortSavedMoviesCards}
                                   savedMovies={savedMovies}

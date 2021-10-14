@@ -3,7 +3,7 @@ import React from 'react';
 import {useFormWithValidation} from "../../utils/useFormWithValidation";
 import {CurrentUserContext} from "../../contexts/CurrentUserContext";
 
-function Profile({ onEditProfile, signOut, errorText }) {
+function Profile({ onEditProfile, signOut, errorText, savingStatus }) {
     const { values, errors, isValid, handleChange, setValues } = useFormWithValidation({});
     const [isEditActive, setEditActive] = React.useState(false);
 
@@ -42,7 +42,7 @@ function Profile({ onEditProfile, signOut, errorText }) {
                 </fieldset>
 
                 <div className="profile__buttons-container">
-                    <span className="profile__api-error">{errorText}</span>
+                    <span className={`profile__api-status ${savingStatus==='Успешно!' ? 'profile__api-status_success' : ''}`}>{savingStatus}</span>
                     <button type="submit" className={`button profile__button profile__button_type_submit ${isEditActive ? 'profile__button_shown' : 'profile__button_not-shown'} ${isValid && (currentUser.name !== values.name || currentUser.email !== values.email) ? '' : 'profile__button_type_submit_disabled'}`}>Сохранить</button>
                     <button type="button" className={`button profile__button profile__button_type_edit ${isEditActive ? 'profile__button_not-shown' : 'profile__button_shown'}`} onClick={handleEditActive}>Редактировать</button>
                     <button type="button" className={`button profile__button profile__button_type_quit ${isEditActive ? 'profile__button_not-shown' : 'profile__button_shown'}`} onClick={signOut}>Выйти из аккаунта</button>

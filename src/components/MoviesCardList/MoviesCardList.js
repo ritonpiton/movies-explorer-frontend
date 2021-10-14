@@ -1,4 +1,5 @@
 import './MoviesCardList.css';
+import {SHORT_MOVIE_DURATION, MORE_BUTTON_SETTINGS} from '../../utils/constants';
 import React from 'react';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import Preloader from "../Preloader/Preloader";
@@ -39,17 +40,17 @@ function MoviesCardList({ movies, isOnSavedPage, isMovieSaved, onAddMovie, onDel
     // сколько карточек загрузить при первой загрузке
     const sizeOfPreloadedArray = () => {
         if (windowSize >= 1280) {
-            return 12;
+            return MORE_BUTTON_SETTINGS.desktop.preload;
         } else if (windowSize < 768) {
-            return 5;
-        } else return 8;
+            return MORE_BUTTON_SETTINGS.mobile.preload;
+        } else return MORE_BUTTON_SETTINGS.tablet.preload;
     }
 
     // по сколько карточек добавлять при нажатии кнопки "Ещё"
     const sizeOfAddedLine = () => {
         if (windowSize >= 1280) {
-            return 3;
-        } else return 2;
+            return MORE_BUTTON_SETTINGS.desktop.add;
+        } else return MORE_BUTTON_SETTINGS.tablet.add;
     }
 
     return(

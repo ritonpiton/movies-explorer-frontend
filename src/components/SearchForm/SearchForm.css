@@ -29,6 +29,11 @@
     margin-right: 0;
     border: none;
     border-radius: 3px;
+    cursor: pointer;
+}
+.search__submit-btn_disabled{
+    background: #F8F8F8;
+    pointer-events: none;
 }
 .search__input-error{
     display: none;

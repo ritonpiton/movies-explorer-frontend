@@ -2,6 +2,7 @@ import './MoviesCard.css';
 import React from 'react';
 import savedIcon from '../../images/saved-icon.svg';
 import deleteIcon from '../../images/delete-icon.svg';
+import {Link} from 'react-router-dom';
 
 function MoviesCard({card, isOnSavedPage, isMovieSaved, onAddMovie, onDeleteMovie }) {
   const [isAdded, setIsAdded] = React.useState(false);
@@ -36,7 +37,7 @@ function MoviesCard({card, isOnSavedPage, isMovieSaved, onAddMovie, onDeleteMovi
 
   return(
       <div className="card">
-          <img src={isOnSavedPage ? `${card.image}` : `https://api.nomoreparties.co${card.image.url}`} alt={card.nameRU} className="card__image"/>
+        <a className="card__link" href={isOnSavedPage ? card.trailer : card.trailerLink} target="_blank"><img src={isOnSavedPage ? `${card.image}` : `https://api.nomoreparties.co${card.image.url}`} alt={card.nameRU} className="card__image"/></a>
           <h3 className="card__title">{card.nameRU}</h3>
           <p className="card__duration">{hours !== 0 ? `${hours} ч ${mins} мин` : `${mins} мин`}</p>
           {   isOnSavedPage ? (

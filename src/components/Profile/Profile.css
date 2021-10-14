@@ -57,13 +57,16 @@
     line-height: 12px;
     color: #FF4062;
 }
-.profile__api-error{
+.profile__api-status{
     font-weight: normal;
     font-size: 11px;
     line-height: 13px;
     margin: 0 auto 20px;
     box-sizing: border-box;
     color: #FF4062;
+}
+.profile__api-status_success{
+    color: #4cd964;
 }
 .profile__buttons-container{
     margin-top: 200px;

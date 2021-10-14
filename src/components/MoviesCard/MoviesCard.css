@@ -14,6 +14,11 @@
     gap: 14px 18px;
 
 }
+.card__link{
+    margin: 0;
+    padding: 0;
+    grid-area: image;
+}
 .card__title{
     grid-area: title;
     margin: 0 0 0 18px;
@@ -36,7 +41,6 @@
 }
 .card__image{
     width: 100%;
-    grid-area: image;
     height: 200px;
     margin: 0;
 }
